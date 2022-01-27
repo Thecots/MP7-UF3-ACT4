@@ -7,6 +7,12 @@
     </div>
   </header>
   <section class="games">
-    <h1>NO HAY PARTIDAS DISPONIBLES :(</h1>
+
+    <% if (ok) { %>
+      <link rel="stylesheet" href="./css/signin.css">
+    <% } else { %>
+      <h1>NO HAY PARTIDAS DISPONIBLES </h1>
+    <% } %>
   </section>
 </main>
+<script src='./js/search.js'></script>
