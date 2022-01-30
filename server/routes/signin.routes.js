@@ -2,8 +2,10 @@ const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
+const { checkUser } = require('./../middlewares/auth');
 
-router.get('/signin',(req, res) => {
+/* signin  */
+router.get('/signin', checkUser, (req, res) => {
   res.render("signin", {
     signin: true
   });
@@ -21,9 +23,8 @@ router.post('/signin', (req, res) => {
     }
   );
 
-  res.status(200).json({ok: true, token})
+  res.status(200).json({ ok: true, token })
 })
 
 
 module.exports = router;
-  

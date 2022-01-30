@@ -1,0 +1,14 @@
+<main>
+  <header>
+    <h1 class="searchH1">Buscando rival</h1>
+    <div class="buttons">
+      <a style="display: none;"></a>
+      <a style="display: none;"></a>
+      <a href="/delete?id=<%- id %>">salir</a>
+    </div>
+  </header>
+  <script>
+   setTimeout(() => {
+    window.location.href = '/waiting?id=<%- id %>'
+   },2000);
+  </script>

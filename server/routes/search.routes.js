@@ -1,24 +1,37 @@
 const express = require("express");
 const router = express.Router();
-const {checkUser} = require('./../middlewares/auth');
-const mysql = require('mysql');
+const { checkUser, sqlcon } = require('./../middlewares/auth');
 
-const getDataBase = () => {
-  return mysql.createConnection({
-    host: "localhost",
-    user: "daw_user",
-    password: "P@ssw0rd",
-    database: 'connect4'
-  });
-}
+let vv = 0;
+router.get('/search', checkUser, (req, res) => {
+  vv += 1;
+  console.log(vv);
 
-router.get('/search',checkUser, (req, res) => {
-  let con = getDataBase();
-  con.connect(function (err) {
-    if (err) throw res.json({ ok: false });
-    res.render("gameSearch",{ok:false});
-  });
-})
+  try {
+    let con = sqlcon();
+    con.connect(function (err) {
+      if (err) return res.render('gameSearch', { ok: false });
+      con.query("SELECT * FROM partides WHERE ISNULL(guest)", function (err, result, fields) {
+        if (err) return res.render('gameSearch', { ok: false });
+        if (result.length === 0) {
+          return res.render('gameSearch', { ok: false })
+        }
+        const games = [];
+        result.forEach(n => {
+          if (req.id != n.host) {
+            games.push({
+              id: n.id_partida,
+              player: n.player,
+              data: n.data,
+            });
+          }
+        });
+        res.render('gameSearch', { ok: true, games })
+      });
+    });
+  } catch (error) {
+    console.log('error reror ero');
+  }
+});
 
 module.exports = router;
-  

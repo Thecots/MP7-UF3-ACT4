@@ -1,0 +1,34 @@
+<main class="buscarPartida">
+  <header>
+    <h2>Partida <%- id %> - <%- title %> </h2>
+  </header>
+  <div class="tablero">
+    <div class="board">
+     <% tablero.forEach(n => { %>
+       <% n.forEach(g => { %>
+          <span class='circle<%=g%>'></span>
+       <% }) %>
+     <% }) %>
+    </div>
+    <div class='btn <%= title == 'Tu turno' ? 'pointer' : '' %>'>
+      <a href="/move?id=<%- id %>&move=0">1</a> 
+      <a href="/move?id=<%- id %>&move=1">2</a>
+      <a href="/move?id=<%- id %>&move=2">3</a>
+      <a href="/move?id=<%- id %>&move=3">4</a>
+      <a href="/move?id=<%- id %>&move=4">5</a>
+      <a href="/move?id=<%- id %>&move=5">6</a> 
+      <a href="/move?id=<%- id %>&move=6">7</a>
+    <div>
+  </div>
+  </div>
+<!--   <div class="finishgame">
+    <a href="index.php?jugador2=<?php echo $_REQUEST['username']; ?>&accio=buscar_partida">Salir</a>
+  </div> -->
+ 
+</main>
+
+ <script>
+  setTimeout(() => {
+    window.location.reload();
+  }, 1000); 
+ </script>

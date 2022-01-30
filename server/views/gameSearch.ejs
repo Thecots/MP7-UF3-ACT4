@@ -3,13 +3,22 @@
     <h1 class="searchH1">Buscando partidas</h1>
     <div class="buttons">
       <a>jugar vs IA</a>
-      <a id="crearPartida">crear partida</a>
+      <a href="/create">crear partida</a>
     </div>
   </header>
   <section class="games">
 
-    <% if (ok) { %>
-      <link rel="stylesheet" href="./css/signin.css">
+    <% if (ok) { 
+       games.forEach(n => { %>
+        <div>
+              <span>
+                <h3>Partida<%= n.id %></h3>
+                <h3>Creada por: <%= n.player %></h3><h3>-</h3>
+                <h3><%= n.data %></h3>
+              </span>
+              <a href="/join?id=<%= n.id %>">JUGAR</a>
+          </div>
+     <% }); %> 
     <% } else { %>
       <h1>NO HAY PARTIDAS DISPONIBLES </h1>
     <% } %>
