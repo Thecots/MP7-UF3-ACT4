@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const decode = require('jsonwebtoken/decode');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
 const checkUser = (req, res, next) => {
   jwt.verify(req.cookies.session, process.env.SEED, (err, decoded) => {
@@ -18,6 +18,7 @@ const checkUser = (req, res, next) => {
 
 const sqlcon = (req, res) => {
   return mysql.createConnection({
+    connectionLimit: 100,
     host: "localhost",
     user: "daw_user",
     password: "P@ssw0rd",

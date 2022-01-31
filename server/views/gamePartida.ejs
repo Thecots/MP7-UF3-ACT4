@@ -1,6 +1,7 @@
 <main class="buscarPartida">
   <header>
     <h2>Partida <%- id %> - <%- title %> </h2>
+    <a style="display: none;" class="<%= winner == true ? `adissabledexit` : '' %>" href="/search">Salir</a>
   </header>
   <div class="tablero">
     <div class="board">
@@ -10,18 +11,32 @@
        <% }) %>
      <% }) %>
     </div>
-    <div class='btn <%= title == 'Tu turno' ? 'pointer' : '' %>'>
-      <a href="/move?id=<%- id %>&move=0">1</a> 
-      <a href="/move?id=<%- id %>&move=1">2</a>
-      <a href="/move?id=<%- id %>&move=2">3</a>
-      <a href="/move?id=<%- id %>&move=3">4</a>
-      <a href="/move?id=<%- id %>&move=4">5</a>
-      <a href="/move?id=<%- id %>&move=5">6</a> 
-      <a href="/move?id=<%- id %>&move=6">7</a>
-    <div>
+     <% if ( title == 'Tu turno') { %>
+      <div class='btn pointer'>
+        <a <%= tablero[0][0] != 0 ? 'class=dissable ' : '' %> href="/move?id=<%- id %>&move=0">1</a> 
+        <a <%= tablero[0][1] != 0 ? 'class=dissable ' : '' %> href="/move?id=<%- id %>&move=1">2</a>
+        <a <%= tablero[0][2] != 0 ? 'class=dissable ' : '' %> href="/move?id=<%- id %>&move=2">3</a>
+        <a <%= tablero[0][3] != 0 ? 'class=dissable ' : '' %> href="/move?id=<%- id %>&move=3">4</a>
+        <a <%= tablero[0][4] != 0 ? 'class=dissable ' : '' %> href="/move?id=<%- id %>&move=4">5</a>
+        <a <%= tablero[0][5] != 0 ? 'class=dissable ' : '' %> href="/move?id=<%- id %>&move=5">6</a> 
+        <a <%= tablero[0][6] != 0 ? 'class=dissable ' : '' %> href="/move?id=<%- id %>&move=6">7</a>
+      <div>
+     <% }else{ %>
+      <div class='btn'>
+        <a <%= tablero[0][0] != 0 ? 'class=dissable ' : '' %>>1</a> 
+        <a <%= tablero[0][1] != 0 ? 'class=dissable ' : '' %>>2</a>
+        <a <%= tablero[0][2] != 0 ? 'class=dissable ' : '' %>>3</a>
+        <a <%= tablero[0][3] != 0 ? 'class=dissable ' : '' %>>4</a>
+        <a <%= tablero[0][4] != 0 ? 'class=dissable ' : '' %>>5</a>
+        <a <%= tablero[0][5] != 0 ? 'class=dissable ' : '' %>>6</a> 
+        <a <%= tablero[0][6] != 0 ? 'class=dissable ' : '' %>>7</a>
+      <div>
+      <% } %>
   </div>
   </div>
-<!--   <div class="finishgame">
+<!--tablero[1][1] == 0
+  class="dissable"
+  <div class="finishgame">
     <a href="index.php?jugador2=<?php echo $_REQUEST['username']; ?>&accio=buscar_partida">Salir</a>
   </div> -->
  
@@ -31,4 +46,5 @@
   setTimeout(() => {
     window.location.reload();
   }, 1000); 
+
  </script>
