@@ -127,8 +127,10 @@ form h1{
   box-shadow:  0 0 0 .125rem  var(--c-default-blue);
   background-color:var(--c-white);
 }
-.text-field input:focus ~ .label, .text-field input:valid ~ .label,
-.text-field textarea:focus ~ .label, .text-field textarea:valid ~ .label {
+.text-field input:focus ~ .label,
+.text-field input:valid ~ .label,
+.text-field textarea:focus ~ .label,
+.text-field textarea:valid ~ .label {
   top: -0.625rem;
   left: .625rem;
   font-size: .9375rem;

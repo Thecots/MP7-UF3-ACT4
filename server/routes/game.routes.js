@@ -176,7 +176,7 @@ function checkWinner(game) {
       if (i + g >= 0 && i + g < 6 && g >= 0 && g < 7) {
         if (game[i + g][g] == 1) {
           x++;
-          if (x >= 4) return 'guest';
+          if (x >= 4) return 'host';
         } else {
           x = 0;
         }

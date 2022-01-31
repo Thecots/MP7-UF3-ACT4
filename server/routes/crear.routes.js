@@ -17,10 +17,8 @@ router.get('/create', checkUser, (req, res) => {
   });
 });
 
-let vv = 0;
 /* esprando rival */
 router.get('/waiting', checkUser, (req, res) => {
-  console.log(vv += 1);
   let con = sqlcon();
   con.connect(function (err) {
     if (err) return res.redirect('/search');

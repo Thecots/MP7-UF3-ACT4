@@ -13,7 +13,7 @@ router.get('/search', checkUser, (req, res) => {
     con.query("SELECT * FROM partides WHERE ISNULL(guest)", function (err, result, fields) {
       if (err) return res.render('gameSearch', { ok: false });
       if (result.length === 0) {
-        return res.render('gameSearch', { ok: false })
+        return res.render('gameSearch', { ok: false, username: req.usuari })
       }
       const games = [];
       result.forEach(n => {
@@ -25,7 +25,7 @@ router.get('/search', checkUser, (req, res) => {
           });
         }
       });
-      res.render('gameSearch', { ok: true, games })
+      res.render('gameSearch', { ok: true, games, username: req.usuari })
       con.end();
     });
     con.end();

@@ -7,7 +7,7 @@ router.use(require('./search.routes'));
 router.use(require('./crear.routes'));
 router.use(require('./join.routes'));
 router.use(require('./game.routes'));
-
+router.use(require('./local.routes'));
 
 router.get('/', (req, res) => {
   res.redirect("/signin");

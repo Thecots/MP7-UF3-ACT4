@@ -431,3 +431,25 @@ section.games{
         font-weight: 600;
         text-decoration: none;
       }
+
+.sessionc{
+  max-width: 100%;
+  width: 1500px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.sessionc p{
+  font-size: 17px;
+}
+
+.sessionc a{
+  background-color: crimson;
+  padding: 3px 10px;
+  border-radius: 4px;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+}
