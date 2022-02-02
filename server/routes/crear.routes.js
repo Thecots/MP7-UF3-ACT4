@@ -8,7 +8,7 @@ router.get('/create', checkUser, (req, res) => {
   con.connect(function (err) {
     if (err) return res.redirect('/search');
     let d = new Date();
-    con.query(`INSERT INTO partides VALUES (null,'${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}','${req.id}',NULL,'host',NULL,'${req.usuari}')`, (err, result) => {
+    con.query(`INSERT INTO partides VALUES (null,'${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}','${req.id}',NULL,NULL,NULL,'1','1','1',NULL,'${req.usuari}')`, (err, result) => {
       if (err) return res.redirect('/search');
       res.render('gameWaiting', { id: result.insertId });
       con.end();
@@ -27,7 +27,7 @@ router.get('/waiting', checkUser, (req, res) => {
       if (result[0].guest == null) {
         res.render('gameWaiting', { id: req.query.id });
       } else {
-        res.redirect('/game?id=' + req.query.id);
+        res.redirect('/setWord?id=' + req.query.id);
       }
       con.end();
     });

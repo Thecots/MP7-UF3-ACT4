@@ -2,90 +2,127 @@ const express = require("express");
 const router = express.Router();
 const { checkUser, sqlcon } = require('./../middlewares/auth');
 
-/* partida */
-router.get('/game', checkUser, (req, res) => {
-  const tablero = [
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-  ];
-  let winner = true
+/* Word */
+router.get('/setWord', checkUser, (req, res) => {
   let con = sqlcon();
   con.connect(function (err) {
-    if (err) return res.redirect('/game?id=' + req.query.id);
+    if (err) return res.redirect('/search');
     con.query(`SELECT * FROM partides WHERE id_partida=${req.query.id}`, (err, result) => {
-      if (err) return res.redirect('/game?id=' + req.query.id);
-      /* turno */
-      let title = '';
-      if (req.id == result[0].host) {
-        if (result[0].torn == 1) {
-          title = 'Tu turno';
-        } else {
-          title = 'Esperando movimiento del rival';
-        }
-      } else {
-        if (result[0].torn == 2) {
-          title = 'Tu turno';
-        } else {
-          title = 'Esperando movimiento del rival';
-        }
+      if (err) {
+        console.log(err);
+        return res.redirect('/search')
+      };
+
+      if (result[0].hostWord != null && result[0].guestWord != null) {
+        return res.redirect('/game?id=' + req.query.id);
       }
 
-      con.query(`SELECT * FROM moviments WHERE id_partida=${req.query.id}`, (err, result2) => {
-        if (err) return res.redirect('/game?id=' + req.query.id);
+      let player = req.id == result[0].host ? 'host' : 'guest';
+      let state = '';
+      if (player == 'host') {
+        state = result[0].hostWord == null ? false : true;
+      } else {
+        state = result[0].guestWord == null ? false : true;
+      }
 
-        result2.forEach(n => {
-          let q = 5;
-          while (q >= 0) {
-            if (tablero[q][n.columna_moviment] == 0) {
-              tablero[q][n.columna_moviment] = n.jugador;
-              q = -1;
-            }
-            q--;
-          }
-        });
-
-        tablero.forEach(n => {
-          n.forEach(g => {
-            if (g == 0) {
-              winner = 'nadie'
-            }
-          })
-        })
-
-        if (winner != 'nadie') {
-          title = 'has pedido'
-        }
-
-        if (checkWinner(tablero)) {
-          if (checkWinner(tablero) == 'host') {
-            if (result[0].host == req.id) {
-              title = 'Has ganado'
-            } else {
-              title = 'Has perdido'
-            }
-          } else {
-            if (result[0].host != req.id) {
-              title = 'Has ganado'
-            } else {
-              title = 'Has perdido'
-            }
-          }
-          winner = true;
-        }
-
-
-        con.end();
-        res.render('gamePartida', {
-          id: req.query.id,
-          title,
-          tablero,
-          winner
-        });
+      res.render('gameWord', {
+        player,
+        state,
+        id: req.query.id
       });
+      con.end();
+    });
+  });
+})
+
+/* Guardar palabra */
+router.get('/setWordSave', checkUser, (req, res) => {
+  let con = sqlcon();
+  con.connect(function (err) {
+    if (err) return res.redirect('/search');
+    con.query(`SELECT * FROM partides WHERE id_partida=${req.query.id}`, (err, result) => {
+      if (err) return res.redirect('/search');
+      if (req.id == result[0].host) {
+        con.query(`UPDATE partides SET hostWord = "${req.query.word}" WHERE id_partida=${req.query.id}`, (err, result) => {
+          if (err) return res.redirect('/search');
+          res.redirect('/setWord?id=' + req.query.id);
+          con.end();
+        });
+      } else {
+        con.query(`UPDATE partides SET guestWord = "${req.query.word}" WHERE id_partida=${req.query.id}`, (err, result) => {
+          if (err) return console.log(err);
+          res.redirect('/setWord?id=' + req.query.id);
+          con.end();
+        });
+      }
+    });
+  });
+})
+
+
+
+/* partida */
+router.get('/game', checkUser, (req, res) => {
+  let player, state, id = req.query.id, hp1, hp2, p1, p2, l1, l2;
+  let con = sqlcon();
+  con.connect(function (err) {
+    if (err) return res.redirect('/search');
+    con.query(`SELECT * FROM partides WHERE id_partida=${req.query.id}`, (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.redirect('/search')
+      };
+
+      player = req.id == result[0].host ? 1 : 2;
+      let win = false;
+      if (player == 1) {
+        state = result[0].torn != 1 ? 2 : 1;
+
+        hp1 = getLives(result[0].guestWord, result[0].hostLetters.slice(0, result[0].hostLetters.length));
+        hp2 = getLives(result[0].hostWord, result[0].guestLetters.slice(0, result[0].guestLetters.length));
+        p1 = result[0].hostWord;
+        p2 = result[0].guestWord;
+        l1 = result[0].hostLetters;
+        l2 = result[0].guestLetters;
+
+
+
+      } else {
+        state = result[0].torn == 1 ? 2 : 1;
+        hp2 = getLives(result[0].guestWord, result[0].hostLetters.slice(0, result[0].hostLetters.length));
+        hp1 = getLives(result[0].hostWord, result[0].guestLetters.slice(0, result[0].guestLetters.length));
+
+        p2 = result[0].hostWord;
+        p1 = result[0].guestWord;
+        l2 = result[0].hostLetters;
+        l1 = result[0].guestLetters;
+
+
+
+      }
+
+      if (hp1 == 0 || checkWinner(p1, l2)) {
+        win = 'Has pedido';
+        state = 3;
+      }
+
+      if (hp2 == 0 || checkWinner(p2, l1)) {
+        win = 'Has ganado!'
+        state = 3;
+      }
+
+
+
+      res.render('gamePartida', {
+        player,
+        state,
+        id: req.query.id,
+        hp1, hp2,
+        p1, p2,
+        l1, l2,
+        win
+      });
+      con.end();
     });
   });
 })
@@ -94,138 +131,54 @@ router.get('/move', checkUser, (req, res) => {
   let con = sqlcon();
   con.connect(function (err) {
     if (err) return res.redirect('/search');
-    con.query(`UPDATE  partides SET torn = IF(torn=1,2,1)  WHERE id_partida=${req.query.id}`, (err, result) => {
+    con.query(`SELECT * FROM partides WHERE id_partida=${req.query.id}`, (err, result) => {
       if (err) return res.redirect('/search');
-
-      con.query(`SELECT * FROM partides WHERE id_partida=${req.query.id}`, (err, result) => {
-        if (err) return res.redirect('/search');
-
-        con.query(`INSERT INTO moviments VALUES (null,${result[0].torn == 1 ? 2 : 1},${req.query.move},${req.query.id})`, (err, result) => {
+      if (req.id == result[0].host) {
+        con.query(`UPDATE partides SET hostLetters = "${result[0].hostLetters + req.query.letter}", torn = IF(torn=1,2,1) WHERE id_partida=${req.query.id}`, (err, result) => {
           if (err) return res.redirect('/search');
-          res.redirect('/game?id=' + req.query.id);
+          res.redirect('/setWord?id=' + req.query.id);
           con.end();
         });
-        ;
-      });
+      } else {
+        con.query(`UPDATE partides SET guestLetters = "${result[0].guestLetters + req.query.letter}", torn = IF(torn=1,2,1) WHERE id_partida=${req.query.id}`, (err, result) => {
+          if (err) return console.log(err);
+          res.redirect('/setWord?id=' + req.query.id);
+          con.end();
+        });
+      }
     });
   });
 });
 
 
-function checkWinner(game) {
-  /* Horizonta jugador 1 */
-  for (let i = 0; i < 6; i++) {
-    let x = 0;
-    for (let g = 0; g < 6; g++) {
-      if (game[i][g] == 1) {
-        x++;
-        if (x == 4) {
-          return 'host';
-        }
-      } else {
-        x = 0;
-      }
+function getLives(palabraRival, letras) {
+  letras = letras.slice(1)
+  palabraRival = palabraRival.split('').filter((item, pos) => {
+    return palabraRival.indexOf(item) == pos;
+  }).join().replace(/,/g, '');
+  let x = letras.length;
+  for (let i = 0; i < palabraRival.length; i++) {
+    if (letras.split('').includes(palabraRival[i])) {
+      x -= 1;
     }
   }
-  /* Horizonta jugador 2 */
-  for (let i = 0; i < 6; i++) {
-    let x = 0;
-    for (let g = 0; g < 6; g++) {
-      if (game[i][g] == 2) {
-        x++;
-        if (x == 4) {
-          return 'guest';
-        }
-      } else {
-        x = 0;
-      }
+  return 7 - x;
+}
+
+
+function checkWinner(palabraRival, letras) {
+  letras = letras.slice(1)
+  palabraRival = palabraRival.split('').filter((item, pos) => {
+    return palabraRival.indexOf(item) == pos;
+  }).join().replace(/,/g, '');
+  let x = 0;
+  for (let i = 0; i < palabraRival.length; i++) {
+    if (letras.split('').includes(palabraRival[i])) {
+      x += 1;
     }
   }
-  /* Vertical jugador 1 */
-  for (let i = 0; i < 7; i++) {
-    let x = 0;
-    for (let g = 0; g < 6; g++) {
-      if (game[g][i] == 1) {
-        x++;
-        if (x == 4) {
-          return 'host';
-        }
-      } else {
-        x = 0;
-      }
-    }
-  }
-  /* Vertical jugador 2 */
-  for (let i = 0; i < 7; i++) {
-    let x = 0;
-    for (let g = 0; g < 6; g++) {
-      if (game[g][i] == 2) {
-        x++;
-        if (x == 4) {
-          return 'guest';
-        }
-      } else {
-        x = 0;
-      }
-    }
-  }
-  // Diagonal (\) jugador 1
-  for (i = -3; i < 3; i++) {
-    let x = 0;
-    for (g = 0; g < 7; g++) {
-      if (i + g >= 0 && i + g < 6 && g >= 0 && g < 7) {
-        if (game[i + g][g] == 1) {
-          x++;
-          if (x >= 4) return 'host';
-        } else {
-          x = 0;
-        }
-      }
-    }
-  }
-  // Diagonal (\) jugador 2
-  for (i = -3; i < 3; i++) {
-    let x = 0;
-    for (g = 0; g < 7; g++) {
-      if (i + g >= 0 && i + g < 6 && g >= 0 && g < 7) {
-        if (game[i + g][g] == 2) {
-          x++;
-          if (x >= 4) return 'guest';
-        } else {
-          x = 0;
-        }
-      }
-    }
-  }
-  // Diagonal (/) jugador 1
-  for (i = 3; i < 8; i++) {
-    let x = 0;
-    for (g = 0; g < 7; g++) {
-      if (i - g >= 0 && i - g < 6 && g >= 0 && g < 7) {
-        if (game[i - g][g] == 1) {
-          x++;
-          if (x >= 4) return 'host';
-        } else {
-          x = 0;
-        }
-      }
-    }
-  }
-  // Diagonal (/) jugador 2
-  for (i = 3; i < 8; i++) {
-    let x = 0;
-    for (g = 0; g < 7; g++) {
-      if (i - g >= 0 && i - g < 6 && g >= 0 && g < 7) {
-        if (game[i - g][g] == 2) {
-          x++;
-          if (x >= 4) return 'guest';
-        } else {
-          x = 0;
-        }
-      }
-    }
-  }
-  return false;
+
+  return x == palabraRival.length;
 }
 
 module.exports = router;

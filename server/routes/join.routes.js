@@ -9,11 +9,13 @@ router.get('/join', checkUser, (req, res) => {
     if (err) return res.redirect('/search');
     con.query(`UPDATE partides SET guest='${req.id}', torn=1`, (err, result) => {
       if (err) return res.redirect('/search');
-      res.redirect('/game?id=' + req.query.id);
+      res.redirect('/setWord?id=' + req.query.id);
       con.end();
     });
     con.end();
   });
 })
+
+
 
 module.exports = router;

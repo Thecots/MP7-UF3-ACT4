@@ -1,0 +1,44 @@
+<main>
+  <header>
+    <h1 class="
+    <% if (state) { %>
+      searchH1
+  <% } else { %>
+      
+  <% } %>
+    ">Partida <%= id %> - 
+      <% if (state) { %>
+        Esperando palabra del rival
+    <% } else { %>
+        Escribe una palabra
+    <% } %>
+  </h1>
+    <div class="buttons">
+      <a style="display: none;"></a>
+      <a style="display: none;"></a>
+    </div>
+  </header>
+  <% if (state) { %>
+<% } else { %>
+  <section class="word">
+    <form action="/setWordSave">
+      <div class="text-field">
+          <input id="titulo" required autocomplete="off" name="word" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32) && (event.charCode != 32)" maxlength="10" minlength="4">
+          <label class="label">Palabra (min: 4 letras, max: 10 letras)</label>
+      </div>
+      <input hidden type="text" name="id" value="<%= id %> "> 
+      <div class="btn-box word-btn-box">
+        <input type="submit" value="jugar">
+      </div>
+    </form>
+  </section>
+<% } %>
+
+</main>
+  <% if (state) { %>
+    <script>
+      setTimeout(() => {
+        window.location.reload();
+      },500);
+      </script>
+  <% } %>

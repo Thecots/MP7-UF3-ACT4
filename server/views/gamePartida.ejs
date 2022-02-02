@@ -1,44 +1,165 @@
-<main class="buscarPartida">
+<main>
   <header>
-    <h2>Partida <%- id %> - <%- title %> </h2>
-    <a style="display: none;" class="<%= winner == true ? `adissabledexit` : '' %>" href="/search">Salir</a>
-  </header>
-  <div class="tablero">
-    <div class="board">
-     <% tablero.forEach(n => { %>
-       <% n.forEach(g => { %>
-          <span class='circle<%=g%>'></span>
-       <% }) %>
-     <% }) %>
+    <h1 class="
+    <% if (state != 1 && state != 3 ) { %>
+      searchH1
+  <% } %>">
+
+  Partida <%= id %> - 
+    <% if(state == 1){ %>
+      Tú turno
+    <% }else if(state == 3){ %>
+      <%= win %>
+    <% }else{ %>
+      Esperando rival
+    <% } %> 
+   </h1>
+    <div class="buttons">
+      <a style="display: none;"></a>
+      <a style="display: none;"></a>
     </div>
-     <% if ( title == 'Tu turno') { %>
-      <div class='btn pointer'>
-        <a <%= tablero[0][0] != 0 ? 'class=dissable ' : '' %> href="/move?id=<%- id %>&move=0">1</a> 
-        <a <%= tablero[0][1] != 0 ? 'class=dissable ' : '' %> href="/move?id=<%- id %>&move=1">2</a>
-        <a <%= tablero[0][2] != 0 ? 'class=dissable ' : '' %> href="/move?id=<%- id %>&move=2">3</a>
-        <a <%= tablero[0][3] != 0 ? 'class=dissable ' : '' %> href="/move?id=<%- id %>&move=3">4</a>
-        <a <%= tablero[0][4] != 0 ? 'class=dissable ' : '' %> href="/move?id=<%- id %>&move=4">5</a>
-        <a <%= tablero[0][5] != 0 ? 'class=dissable ' : '' %> href="/move?id=<%- id %>&move=5">6</a> 
-        <a <%= tablero[0][6] != 0 ? 'class=dissable ' : '' %> href="/move?id=<%- id %>&move=6">7</a>
+   <% if (state == 3) { %>
+    <div class="buttons">
+      <a style="display: none;"></a>
+      <a style="display: none;"></a>
+      <a href="/search">salir</a>
+    </div>
+   <% } %>
+  </header>
+  <section class="game">
+    <div class="board">
+       <div class="img">
+        <img src='./img/<%= 7-hp1 %>.png'>
+      </div>
+      <div class="foundedLetters">
+        <% for($i = 0; $i < p2.length; $i++){ %>
+          <% if(l1.includes(p2[$i])){ %>
+           <span><%= p2[$i] %></span>
+          <% }else{ %>
+           <span class='bar'></span>
+          <% } %>
+          <%} %> 
+      </div>
+     <% if (state == 1) { %>
+      <div class="keyboard">
+        <div>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=q'" class="<%= l1.toUpperCase().includes('Q') ? 'disabled' : '' %>">Q</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=w'" class="<%= l1.toUpperCase().includes('W') ? 'disabled' : '' %>">W</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=e'" class="<%= l1.toUpperCase().includes('E') ? 'disabled' : '' %>">E</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=r'" class="<%= l1.toUpperCase().includes('R') ? 'disabled' : '' %>">R</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=t'" class="<%= l1.toUpperCase().includes('T') ? 'disabled' : '' %>">T</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=y'" class="<%= l1.toUpperCase().includes('Y') ? 'disabled' : '' %>">Y</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=u'" class="<%= l1.toUpperCase().includes('U') ? 'disabled' : '' %>">U</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=i'" class="<%= l1.toUpperCase().includes('I') ? 'disabled' : '' %>">I</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=o'" class="<%= l1.toUpperCase().includes('O') ? 'disabled' : '' %>">O</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=p'" class="<%= l1.toUpperCase().includes('P') ? 'disabled' : '' %>">P</button>
+      </div>
+      <!-- A-Ñ -->
       <div>
-     <% }else{ %>
-      <div class='btn'>
-        <a <%= tablero[0][0] != 0 ? 'class=dissable ' : '' %>>1</a> 
-        <a <%= tablero[0][1] != 0 ? 'class=dissable ' : '' %>>2</a>
-        <a <%= tablero[0][2] != 0 ? 'class=dissable ' : '' %>>3</a>
-        <a <%= tablero[0][3] != 0 ? 'class=dissable ' : '' %>>4</a>
-        <a <%= tablero[0][4] != 0 ? 'class=dissable ' : '' %>>5</a>
-        <a <%= tablero[0][5] != 0 ? 'class=dissable ' : '' %>>6</a> 
-        <a <%= tablero[0][6] != 0 ? 'class=dissable ' : '' %>>7</a>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=a'" class="<%= l1.toUpperCase().includes('A') ? 'disabled' : '' %>">A</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=s'" class="<%= l1.toUpperCase().includes('S') ? 'disabled' : '' %>">S</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=d'" class="<%= l1.toUpperCase().includes('D') ? 'disabled' : '' %>">D</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=f'" class="<%= l1.toUpperCase().includes('F') ? 'disabled' : '' %>">F</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=g'" class="<%= l1.toUpperCase().includes('G') ? 'disabled' : '' %>">G</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=h'" class="<%= l1.toUpperCase().includes('H') ? 'disabled' : '' %>">H</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=j'" class="<%= l1.toUpperCase().includes('J') ? 'disabled' : '' %>">J</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=k'" class="<%= l1.toUpperCase().includes('K') ? 'disabled' : '' %>">K</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=l'" class="<%= l1.toUpperCase().includes('L') ? 'disabled' : '' %>">L</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=ñ'" class="<%= l1.toUpperCase().includes('Ñ') ? 'disabled' : '' %>">Ñ</button>
+      </div>
+      <!-- Z-M -->
       <div>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=z'" class="<%= l1.toUpperCase().includes('Z') ? 'disabled' : '' %>">Z</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=x'" class="<%= l1.toUpperCase().includes('X') ? 'disabled' : '' %>">X</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=c'" class="<%= l1.toUpperCase().includes('C') ? 'disabled' : '' %>">C</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=v'" class="<%= l1.toUpperCase().includes('V') ? 'disabled' : '' %>">V</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=b'" class="<%= l1.toUpperCase().includes('B') ? 'disabled' : '' %>">B</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=n'" class="<%= l1.toUpperCase().includes('N') ? 'disabled' : '' %>">N</button>
+          <button onclick="window.location.href='/move?id=<%=id%>&letter=m'" class="<%= l1.toUpperCase().includes('M') ? 'disabled' : '' %>">M</button>
+      </div>
+    </div>
+    <% } else { %>
+      <div class="keyboard">
+        <div>
+          <button class="disabled">Q</button>
+          <button class="disabled">W</button>
+          <button class="disabled">E</button>
+          <button class="disabled">R</button>
+          <button class="disabled">T</button>
+          <button class="disabled">Y</button>
+          <button class="disabled">U</button>
+          <button class="disabled">I</button>
+          <button class="disabled">O</button>
+          <button class="disabled">P</button>
+      </div>
+      <!-- A-Ñ -->
+      <div>
+          <button class="disabled">A</button>
+          <button class="disabled">S</button>
+          <button class="disabled">D</button>
+          <button class="disabled">F</button>
+          <button class="disabled">G</button>
+          <button class="disabled">H</button>
+          <button class="disabled">J</button>
+          <button class="disabled">K</button>
+          <button class="disabled">L</button>
+          <button class="disabled">Ñ</button>
+      </div>
+      <!-- Z-M -->
+      <div>
+          <button class="disabled">Z</button>
+          <button class="disabled">X</button>
+          <button class="disabled">C</button>
+          <button class="disabled">V</button>
+          <button class="disabled">B</button>
+          <button class="disabled">N</button>
+          <button class="disabled">M</button>
+      </div>
       <% } %>
-  </div>
-  </div>
+      </div>
+    </div>
+    <div class="info">
+      <div class="hostLives">
+        <h1>TUS VIDAS</h1>
+        <div class="lives">
+        <% for( let i = 0; i < hp1; i++ ) { %>
+          <img src='./img/h1.png'>
+        <% } %>
+        <% for( let i = 0; i < 7-hp1; i++ ) { %>
+          <img src='./img/h2.png'>
+        <% } %>
+        </div>
+      </div>
+      <div class="guestGame">
+        <h1>RIVAL</h1>
+        <div class="guestBoard">
+          <img src='./img/<%= 7-hp2 %>.png'>
+        </div>
+        <div class="guestLetters">
+          <% for($i = 0; $i < p1.length; $i++){ %>
+            <% if(l2.includes(p1[$i])){ %>
+             <span><%= p1[$i] %></span>
+            <% }else{ %>
+             <span class='bar'></span>
+            <% } %>
+            <%} %> 
+        </div>
+        <div class="guestLives">
+          <% for( let i = 0; i < hp2; i++ ) { %>
+            <img src='./img/h1.png'>
+          <% } %>
+          <% for( let i = 0; i < 7-hp2; i++ ) { %>
+            <img src='./img/h2.png'>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
-
- <script>
-  setTimeout(() => {
-    window.location.reload();
-  }, 1000); 
-
- </script>
+<% if (state == 2) { %>
+  <script>
+    setTimeout(() => {
+      window.location.reload();
+    },1000);
+    </script>
+<% } %>

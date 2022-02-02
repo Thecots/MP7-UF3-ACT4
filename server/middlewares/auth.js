@@ -22,7 +22,7 @@ const sqlcon = (req, res) => {
     host: "localhost",
     user: "daw_user",
     password: "P@ssw0rd",
-    database: 'connect4'
+    database: 'ahorcado'
   });
 }
 

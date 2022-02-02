@@ -1,21 +1,17 @@
-DROP DATABASE IF EXISTS connect4;
-CREATE DATABASE connect4;
-USE connect4;
+DROP DATABASE IF EXISTS ahorcado;
+CREATE DATABASE ahorcado;
+USE ahorcado;
 
 CREATE TABLE partides(
   id_partida INT PRIMARY KEY AUTO_INCREMENT,
   data VARCHAR(100),
   host VARCHAR(100),
   guest VARCHAR(100),
-  torn INT,
-  winner INT,
+  hostWord VARCHAR(10),
+  guestWord VARCHAR(10),
+  hostLetters VARCHAR(100),
+  guestLetters VARCHAR(100),
+  torn VARCHAR(10),
+  winner VARCHAR(10),
   player VARCHAR(100)
 );
-
-CREATE TABLE moviments(
-  id_moviment INT PRIMARY KEY AUTO_INCREMENT,
-  jugador VARCHAR(100),
-  columna_moviment INT,
-  id_partida INT,
-  FOREIGN KEY (id_partida) REFERENCES partides(id_partida)
-)
