@@ -1,21 +1,69 @@
-<main class="buscarPartida">
+<main class="word__">
   <header>
-    <h2>Partida vs IA - Tu turno </h2>
-    <a class="adissabledexit" href="/search">Salir</a>
-  </header>
-  <div class="tablero">
-    <div class="board">
-     
+    <h1>Escribe una palabra</h1>
+    <div class="buttons">
+      <a style="display: none;"></a>
+      <a style="display: none;"></a>
     </div>
-    <div class='btn pointer'>
-      <a>1</a> 
-      <a>2</a>
-      <a>3</a>
-      <a>4</a>
-      <a>5</a>
-      <a>6</a> 
-      <a>7</a>
-    <div>
-  </div>
+  </header>
+  <section class="word">
+    <form>
+      <div class="text-field">
+          <input id="titulo" required autocomplete="off" name="word" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32) && (event.charCode != 32)" maxlength="10" minlength="4">
+          <label class="label">Palabra (min: 4 letras, max: 10 letras)</label>
+      </div>
+      <div class="btn-box word-btn-box">
+        <input type="submit" value="jugar">
+      </div>
+    </form>
+  </section>
+</main>
+
+<!-- partida -->
+<main class = "game__">
+  <header>
+    <h1>Partida vs IA - Tú turno</h1>
+
+    <div class="buttons">
+      <a style="display: none;"></a>
+      <a style="display: none;"></a>
+    </div>
+    <div class="buttons">
+      <a style="display: none;"></a>
+      <a style="display: none;"></a>
+      <a style="display: none;" href="/search">salir</a>
+    </div>
+  </header>
+  <section class="game">
+    <div class="board">
+       <div class="img">
+        <img src='./img/0.png'>
+      </div>
+      <div class="foundedLetters"></div>
+      <div class="keyboard"></div>
+      </div>
+    </div>
+    <div class="info">
+      <div class="hostLives">
+        <h1>TUS VIDAS</h1>
+        <div class="lives">
+        <img src='./img/h1.png'>
+        <img src='./img/h2.png'>
+        </div>
+      </div>
+      <div class="guestGame">
+        <h1>RIVAL</h1>
+        <div class="guestBoard">
+          <img src='./img/0.png'>
+        </div>
+        <div class="guestLetters"><span class='bar'></span>
+        </div>
+        <div class="guestLives">
+          <img src='./img/h1.png'>
+
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 <script src="./js/local.js"></script>

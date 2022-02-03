@@ -1,231 +1,129 @@
-const btn = document.querySelector('.btn');
-const board = document.querySelector('.board');
+const rwords = ["cajero", "zorro", "kilogramo", "viento", "diente", "cabello", "fuego", "lluvia", "cosas", "palmera", "levantar", "elefante", "segar", "socorro", "nido", "masa", "gastar", "lanzar", "cuatro", "cortina", "rotar", "emparejar", "alto", "vestuario", "criticar", "ostra", "estatua", "casco", "vertical", "norte", "nido", "rotar"];
+const rletters = 'qwertyuiopasdfghjklñzxcvbnm';
 
-const tablero = [
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-];
+let palabra = palabraIa = '', letras = letrasIa = '1', vidas = vidasIa = 7;
 
-let turn = 1;
+const game = document.querySelector('.game__');
+const word = document.querySelector('.word__');
+const form = document.querySelector('form');
+game.style.display = 'none'
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  palabra = form[0].value;
+  palabraIa = rwords[Math.round(Math.random() * rwords.length - 1)];
+  console.log(palabraIa);
+  word.style.display = 'none';
+  game.style.display = 'block';
+  board();
+});
 
 
+function board() {
+  /* letras */
+  document.querySelector('.foundedLetters').innerHTML = letrasE(palabraIa, letras);
+  document.querySelector('.guestLetters').innerHTML = letrasE(palabra, letrasIa) + ' ';
+  /* teclado */
+  keyboard();
+  /* vidas */
+  let hp1 = getLives(palabraIa, letras), hp2 = getLives(palabra, letrasIa);
+  ;
 
-function printButtons(e) {
-  btn.classList.add('pointer');
-  btn.innerHTML = `
-    <a ${e[0][0] != 0 ? 'class=dissable ' : ''} onclick="move(0,1)">1</a> 
-    <a ${e[0][1] != 0 ? 'class=dissable ' : ''} onclick="move(1,1)">2</a>
-    <a ${e[0][2] != 0 ? 'class=dissable ' : ''} onclick="move(2,1)">3</a>
-    <a ${e[0][3] != 0 ? 'class=dissable ' : ''} onclick="move(3,1)">4</a>
-    <a ${e[0][4] != 0 ? 'class=dissable ' : ''} onclick="move(4,1)">5</a>
-    <a ${e[0][5] != 0 ? 'class=dissable ' : ''} onclick="move(5,1)">6</a> 
-    <a ${e[0][6] != 0 ? 'class=dissable ' : ''} onclick="move(6,1)">7</a>
-  `
-};
+  document.querySelector('.lives').innerHTML = vidasPrint(hp1);
+  document.querySelector('.guestLives').innerHTML = vidasPrint(hp2);
+}
 
-function disabbleButtons() {
-  btn.classList.remove('pointer');
-  btn.innerHTML = `
-    <a>1</a> 
-    <a>2</a>
-    <a>3</a>
-    <a>4</a>
-    <a>5</a>
-    <a>6</a> 
-    <a>7</a>
-  `;
-};
+function setLetter(e) {
+  letras += e;
+  randomletter()
+  board();
+}
 
-function printBoard(e) {
+function randomletter() {
+  let x = rletters[Math.round(Math.random() * rletters.length - 1)];
+  if (!letrasIa.includes(x)) {
+    letrasIa += x;
+    return true;
+  }
+  randomletter();
+}
+
+/* vidas */
+function getLives(p, l) {
+  l = l.slice(1)
+  p = p.split('').filter((item, pos) => {
+    return p.indexOf(item) == pos;
+  }).join().replace(/,/g, '');
+  let x = l.length;
+  for (let i = 0; i < p.length; i++) {
+    if (l.split('').includes(p[i])) {
+      x -= 1;
+    }
+  }
+  return 7 - x;
+}
+
+/* imprimir vidas */
+
+function vidasPrint(h1) {
   let t = '';
-  e.forEach(n => {
-    n.forEach(g => {
-      t += `<span class='circle${g}'></span>`;
-    })
-  });
-  board.innerHTML = t;
+  for (let i = 0; i < h1; i++) {
+    t += '<img src="./img/h1.png">';
+  }
+  for (let i = 0; i < 7 - h1; i++) {
+    t += '<img src="./img/h2.png">';
+  }
+  return t;
 }
 
-function checkWinner(game) {
-  /* Horizonta jugador 1 */
-  for (let i = 0; i < 6; i++) {
-    let x = 0;
-    for (let g = 0; g < 6; g++) {
-      if (game[i][g] == 1) {
-        x++;
-        if (x == 4) {
-          return 'host';
-        }
-      } else {
-        x = 0;
-      }
-    }
-  }
-  /* Horizonta jugador 2 */
-  for (let i = 0; i < 6; i++) {
-    let x = 0;
-    for (let g = 0; g < 6; g++) {
-      if (game[i][g] == 2) {
-        x++;
-        if (x == 4) {
-          return 'ia';
-        }
-      } else {
-        x = 0;
-      }
-    }
-  }
-  /* Vertical jugador 1 */
-  for (let i = 0; i < 7; i++) {
-    let x = 0;
-    for (let g = 0; g < 6; g++) {
-      if (game[g][i] == 1) {
-        x++;
-        if (x == 4) {
-          return 'host';
-        }
-      } else {
-        x = 0;
-      }
-    }
-  }
-  /* Vertical jugador 2 */
-  for (let i = 0; i < 7; i++) {
-    let x = 0;
-    for (let g = 0; g < 6; g++) {
-      if (game[g][i] == 2) {
-        x++;
-        if (x == 4) {
-          return 'ia';
-        }
-      } else {
-        x = 0;
-      }
-    }
-  }
-  // Diagonal (\) jugador 1
-  for (i = -3; i < 3; i++) {
-    let x = 0;
-    for (g = 0; g < 7; g++) {
-      if (i + g >= 0 && i + g < 6 && g >= 0 && g < 7) {
-        if (game[i + g][g] == 1) {
-          x++;
-          if (x >= 4) return 'host';
-        } else {
-          x = 0;
-        }
-      }
-    }
-  }
-  // Diagonal (\) jugador 2
-  for (i = -3; i < 3; i++) {
-    let x = 0;
-    for (g = 0; g < 7; g++) {
-      if (i + g >= 0 && i + g < 6 && g >= 0 && g < 7) {
-        if (game[i + g][g] == 2) {
-          x++;
-          if (x >= 4) return 'ia';
-        } else {
-          x = 0;
-        }
-      }
-    }
-  }
-  // Diagonal (/) jugador 1
-  for (i = 3; i < 8; i++) {
-    let x = 0;
-    for (g = 0; g < 7; g++) {
-      if (i - g >= 0 && i - g < 6 && g >= 0 && g < 7) {
-        if (game[i - g][g] == 1) {
-          x++;
-          if (x >= 4) return 'host';
-        } else {
-          x = 0;
-        }
-      }
-    }
-  }
-  // Diagonal (/) jugador 2
-  for (i = 3; i < 8; i++) {
-    let x = 0;
-    for (g = 0; g < 7; g++) {
-      if (i - g >= 0 && i - g < 6 && g >= 0 && g < 7) {
-        if (game[i - g][g] == 2) {
-          x++;
-          if (x >= 4) return 'ia';
-        } else {
-          x = 0;
-        }
-      }
-    }
-  }
-
-  if (
-    game[0][0] != 0 &&
-    game[0][1] != 0 &&
-    game[0][2] != 0 &&
-    game[0][3] != 0 &&
-    game[0][4] != 0 &&
-    game[0][5] != 0 &&
-    game[0][6] != 0
-  ) {
-    return 'ia';
-  }
-
-  return false;
-}
-
-async function move(e, p) {
-  disabbleButtons();
-  for (let i = 0; i < 6; i++) {
-    if (tablero[i][e] == 0 && i == 5) {
-      tablero[i][e] = p;
-      i = 10
-    } else if (tablero[i][e] == 0) {
-      tablero[i][e] = p;
-      printBoard(tablero);
-      await timer(100);
-      tablero[i][e] = 0;
-      printBoard(tablero);
+/* letras descubiertas */
+function letrasE(p, l) {
+  let t = '';
+  for (i = 0; i < p.length; i++) {
+    if (l.includes(p[i])) {
+      t += `<span>${p[i]}</span > `
     } else {
-      tablero[i - 1][e] = p;
-      i = 8;
+      t += `<span class='bar'></span> `
     }
   }
-  printBoard(tablero);
-
-  if (!checkWinner(tablero)) {
-    if (turn == 1) {
-      bot();
-    } else {
-      printButtons(tablero);
-      turn = 1;
-    }
-  } else {
-    if (checkWinner(tablero) != 'ia') {
-      document.querySelector('header h2').innerText = 'Partida vs IA - Has ganado';
-    } else {
-      document.querySelector('header h2').innerText = 'Partida vs IA - Has perdido';
-    }
-  }
+  return t;
 }
 
-function bot() {
-  let r = Math.floor(Math.random() * 7);
-  if (r == 7) return bot();
-  if (tablero[0][r] != 0) {
-    return bot();
-  }
-  turn = 2;
-  move(r, 2);
+/* teclado */
+function keyboard() {
+  document.querySelector('.keyboard').innerHTML = `
+  <div>
+          <button ${letras.toUpperCase().includes('Q') ? 'class="disabled"' : 'onclick="setLetter(`Q`)"'}>Q</button>
+          <button ${letras.toUpperCase().includes('W') ? 'class="disabled"' : 'onclick="setLetter(`W`)"'}>W</button>
+          <button ${letras.toUpperCase().includes('E') ? 'class="disabled"' : 'onclick="setLetter(`E`)"'}>E</button>
+          <button ${letras.toUpperCase().includes('R') ? 'class="disabled"' : 'onclick="setLetter(`R`)"'}>R</button>
+          <button ${letras.toUpperCase().includes('T') ? 'class="disabled"' : 'onclick="setLetter(`T`)"'}>T</button>
+          <button ${letras.toUpperCase().includes('Y') ? 'class="disabled"' : 'onclick="setLetter(`Y`)"'}>Y</button>
+          <button ${letras.toUpperCase().includes('U') ? 'class="disabled"' : 'onclick="setLetter(`U`)"'}>U</button>
+          <button ${letras.toUpperCase().includes('I') ? 'class="disabled"' : 'onclick="setLetter(`I`)"'}>I</button>
+          <button ${letras.toUpperCase().includes('O') ? 'class="disabled"' : 'onclick="setLetter(`O`)"'}>O</button>
+          <button ${letras.toUpperCase().includes('P') ? 'class="disabled"' : 'onclick="setLetter(`P`)"'}>P</button>
+      </div>
+      <div>
+          <button ${letras.toUpperCase().includes('A') ? 'class="disabled"' : 'onclick="setLetter(`A`)"'}>A</button>
+          <button ${letras.toUpperCase().includes('S') ? 'class="disabled"' : 'onclick="setLetter(`S`)"'}>S</button>
+          <button ${letras.toUpperCase().includes('D') ? 'class="disabled"' : 'onclick="setLetter(`D`)"'}>D</button>
+          <button ${letras.toUpperCase().includes('F') ? 'class="disabled"' : 'onclick="setLetter(`F`)"'}>F</button>
+          <button ${letras.toUpperCase().includes('G') ? 'class="disabled"' : 'onclick="setLetter(`G`)"'}>G</button>
+          <button ${letras.toUpperCase().includes('H') ? 'class="disabled"' : 'onclick="setLetter(`H`)"'}>H</button>
+          <button ${letras.toUpperCase().includes('J') ? 'class="disabled"' : 'onclick="setLetter(`J`)"'}>J</button>
+          <button ${letras.toUpperCase().includes('K') ? 'class="disabled"' : 'onclick="setLetter(`K`)"'}>K</button>
+          <button ${letras.toUpperCase().includes('L') ? 'class="disabled"' : 'onclick="setLetter(`L`)"'}>L</button>
+          <button ${letras.toUpperCase().includes('Ñ') ? 'class="disabled"' : 'onclick="setLetter(`Ñ`)"'}>Ñ</button>
+      </div>
+      <div>
+          <button ${letras.toUpperCase().includes('Z') ? 'class="disabled"' : 'onclick="setLetter(`Z`)"'}>Z</button>
+          <button ${letras.toUpperCase().includes('X') ? 'class="disabled"' : 'onclick="setLetter(`X`)"'}>X</button>
+          <button ${letras.toUpperCase().includes('C') ? 'class="disabled"' : 'onclick="setLetter(`C`)"'}>C</button>
+          <button ${letras.toUpperCase().includes('V') ? 'class="disabled"' : 'onclick="setLetter(`V`)"'}>V</button>
+          <button ${letras.toUpperCase().includes('B') ? 'class="disabled"' : 'onclick="setLetter(`B`)"'}>B</button>
+          <button ${letras.toUpperCase().includes('N') ? 'class="disabled"' : 'onclick="setLetter(`N`)"'}>N</button>
+          <button ${letras.toUpperCase().includes('M') ? 'class="disabled"' : 'onclick="setLetter(`M`)"'}>M</button>
+      </div>
+  `
 }
-
-
-printBoard(tablero);
-printButtons(tablero);
-
-function timer(ms) { return new Promise(res => setTimeout(res, ms)); }
