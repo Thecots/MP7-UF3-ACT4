@@ -1,7 +1,7 @@
 const rwords = ["cajero", "zorro", "kilogramo", "viento", "diente", "cabello", "fuego", "lluvia", "cosas", "palmera", "levantar", "elefante", "segar", "socorro", "nido", "masa", "gastar", "lanzar", "cuatro", "cortina", "rotar", "emparejar", "alto", "vestuario", "criticar", "ostra", "estatua", "casco", "vertical", "norte", "nido", "rotar"];
 const rletters = 'qwertyuiopasdfghjklñzxcvbnm';
 
-let palabra = palabraIa = '', letras = letrasIa = '1', vidas = vidasIa = 7;
+let palabra = palabraIa = '', letras = letrasIa = '1', hp1 = hp2 = 7;
 
 const game = document.querySelector('.game__');
 const word = document.querySelector('.word__');
@@ -15,37 +15,63 @@ form.addEventListener('submit', e => {
   console.log(palabraIa);
   word.style.display = 'none';
   game.style.display = 'block';
+  palabra = palabra.toLowerCase();
   board();
 });
 
 
-function board() {
+function board(e) {
   /* letras */
   document.querySelector('.foundedLetters').innerHTML = letrasE(palabraIa, letras);
   document.querySelector('.guestLetters').innerHTML = letrasE(palabra, letrasIa) + ' ';
   /* teclado */
-  keyboard();
+  if (!e) {
+    keyboard();
+  } else {
+    keyboardOff();
+  }
   /* vidas */
-  let hp1 = getLives(palabraIa, letras), hp2 = getLives(palabra, letrasIa);
-  ;
+  hp1 = getLives(palabraIa, letras), hp2 = getLives(palabra, letrasIa);
 
   document.querySelector('.lives').innerHTML = vidasPrint(hp1);
   document.querySelector('.guestLives').innerHTML = vidasPrint(hp2);
 }
 
+function checkWinner(hp1, hp2) {
+  if (hp1 <= 0 || checkWinnerLetter(palabra, letrasIa)) {
+    document.querySelector('#title_ h1').innerText = 'Partida vs IA - Has perdido';
+    document.querySelector('#btn_on__').style.display = 'block';
+    return true
+  }
+  if (hp2 <= 0 || checkWinnerLetter(palabraIa, letras)) {
+    document.querySelector('#title_ h1').innerText = 'Partida vs IA - Has ganado!';
+    document.querySelector('#btn_on__').style.display = 'block';
+    return true
+  }
+  return false
+}
+
 function setLetter(e) {
   letras += e;
-  randomletter()
-  board();
+  letras = letras.toLocaleLowerCase();
+  hp1 = getLives(palabraIa, letras), hp2 = getLives(palabra, letrasIa);
+  if (checkWinner(hp1, hp2)) {
+    return board(1);
+  }
+  randomletter();
 }
 
 function randomletter() {
   let x = rletters[Math.round(Math.random() * rletters.length - 1)];
-  if (!letrasIa.includes(x)) {
-    letrasIa += x;
-    return true;
+  if (letrasIa.includes(x) || x == undefined) {
+    return randomletter();
   }
-  randomletter();
+  letrasIa += x;
+  hp1 = getLives(palabraIa, letras), hp2 = getLives(palabra, letrasIa);
+  if (checkWinner(hp1, hp2)) {
+    return board(1);
+  }
+  board();
 }
 
 /* vidas */
@@ -66,6 +92,7 @@ function getLives(p, l) {
 /* imprimir vidas */
 
 function vidasPrint(h1) {
+  h1 = h1 > 7 ? 7 : h1;
   let t = '';
   for (let i = 0; i < h1; i++) {
     t += '<img src="./img/h1.png">';
@@ -126,4 +153,58 @@ function keyboard() {
           <button ${letras.toUpperCase().includes('M') ? 'class="disabled"' : 'onclick="setLetter(`M`)"'}>M</button>
       </div>
   `
+}
+
+/* teclado */
+function keyboardOff() {
+  document.querySelector('.keyboard').innerHTML = `
+  <div>
+          <button class="disabled">Q</button>
+          <button class="disabled">W</button>
+          <button class="disabled">E</button>
+          <button class="disabled">R</button>
+          <button class="disabled">T</button>
+          <button class="disabled">Y</button>
+          <button class="disabled">U</button>
+          <button class="disabled">I</button>
+          <button class="disabled">O</button>
+          <button class="disabled">P</button>
+      </div>
+      <div>
+          <button class="disabled">A</button>
+          <button class="disabled">S</button>
+          <button class="disabled">D</button>
+          <button class="disabled">F</button>
+          <button class="disabled">G</button>
+          <button class="disabled">H</button>
+          <button class="disabled">J</button>
+          <button class="disabled">K</button>
+          <button class="disabled">L</button>
+          <button class="disabled">Ñ</button>
+      </div>
+      <div>
+          <button class="disabled">Z</button>
+          <button class="disabled">X</button>
+          <button class="disabled">C</button>
+          <button class="disabled">V</button>
+          <button class="disabled">B</button>
+          <button class="disabled">N</button>
+          <button class="disabled">M</button>
+      </div>
+  `
+}
+
+function checkWinnerLetter(p, l) {
+  l = l.slice(1)
+  p = p.split('').filter((item, pos) => {
+    return p.indexOf(item) == pos;
+  }).join().replace(/,/g, '');
+  let x = 0;
+  for (let i = 0; i < p.length; i++) {
+    if (l.split('').includes(p[i])) {
+      x += 1;
+    }
+  }
+
+  return x == p.length;
 }
