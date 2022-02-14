@@ -1,5 +1,7 @@
 const rwords = ["cajero", "zorro", "kilogramo", "viento", "diente", "cabello", "fuego", "lluvia", "cosas", "palmera", "levantar", "elefante", "segar", "socorro", "nido", "masa", "gastar", "lanzar", "cuatro", "cortina", "rotar", "emparejar", "alto", "vestuario", "criticar", "ostra", "estatua", "casco", "vertical", "norte", "nido", "rotar"];
 const rletters = 'qwertyuiopasdfghjklñzxcvbnm';
+const img1 = document.querySelector('.board .img img');
+const img2 = document.querySelector('.guestBoard img');
 
 let palabra = palabraIa = '', letras = letrasIa = '1', hp1 = hp2 = 7;
 
@@ -32,6 +34,9 @@ function board(e) {
   }
   /* vidas */
   hp1 = getLives(palabraIa, letras), hp2 = getLives(palabra, letrasIa);
+
+  img1.src = `./img/${7 - hp1}.png`;
+  img2.src = `./img/${7 - hp2}.png`;
 
   document.querySelector('.lives').innerHTML = vidasPrint(hp1);
   document.querySelector('.guestLives').innerHTML = vidasPrint(hp2);
